@@ -12,7 +12,7 @@ const refs = {
     startBtn: document.querySelector('button[data-start]'),
 };
 
-let startTime = 0;
+refs.startBtn.disabled = true;
 
 const options = {
   enableTime: true,
@@ -21,26 +21,32 @@ const options = {
   minuteIncrement: 1,
   onClose(selectedDates) {
     console.log(selectedDates[0])
-    startTime = Date.parse(selectedDates[0]);
+    if (selectedDates[0] > new Date) {
+      refs.startBtn.disabled = false;
+    } else {
+    refs.startBtn.disabled = true;
+    alert ('Please choose a date in the future');
+    }
   },
 };
 
 const fp = flatpickr(refs.input, options);
 
-const timer = {
-  start() {
-    setInterval(() => {
-      const currentTime = Date.now();
-      const differenceTime = startTime - currentTime;
-      const {days, hours, minutes, seconds} = convertMs(differenceTime);
-      console.log(`${days}:${hours}:${minutes}:${seconds}`);
+refs.startBtn.addEventListener('click', timer);
+
+function timer () {
+    let times = setInterval(() => {
+      let differenceTime = Date.parse(refs.input.value) - Date.now();
+      const time = convertMs(differenceTime);
+      textContentsTimer(time);
+
+      if (differenceTime < 1000) {
+        clearInterval(times);
+      }
     }, 1000);
-  },
-}
+  }
 
-refs.startBtn.addEventListener('click', timer.start);
-
-function pad(value) {
+function addLeadingZero(value) {
   return String(value).padStart(2, '0');
 }
 
@@ -50,12 +56,18 @@ function convertMs(ms) {
   const hour = minute * 60;
   const day = hour * 24;
 
-  const days = pad(Math.floor(ms / day));
-  const hours = pad(Math.floor((ms % day) / hour));
-  const minutes = pad(Math.floor(((ms % day) % hour) / minute));
-  const seconds = pad(Math.floor((((ms % day) % hour) % minute) / second));
+  const days = addLeadingZero(Math.floor(ms / day));
+  const hours = addLeadingZero(Math.floor((ms % day) / hour));
+  const minutes = addLeadingZero(Math.floor(((ms % day) % hour) / minute));
+  const seconds = addLeadingZero(Math.floor((((ms % day) % hour) % minute) / second));
 
   return { days, hours, minutes, seconds };
 }
 
+function textContentsTimer ({days, hours, minutes, seconds}) {
+  refs.days.textContent = days;
+  refs.hours.textContent = hours;
+  refs.minutes.textContent = minutes;
+  refs.seconds.textContent = seconds;
+}
 
