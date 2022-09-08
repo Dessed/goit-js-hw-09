@@ -1,6 +1,8 @@
 const flatpickr = require("flatpickr");
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
+import Notiflix from 'notiflix';
+import { Notify } from 'notiflix/build/notiflix-notify-aio';
 
 const refs = {
     input: document.querySelector('input[type="text"]'),
@@ -25,7 +27,7 @@ const options = {
       refs.startBtn.disabled = false;
     } else {
     refs.startBtn.disabled = true;
-    alert ('Please choose a date in the future');
+    Notiflix.Notify.failure('Please choose a date in the future');
     }
   },
 };
