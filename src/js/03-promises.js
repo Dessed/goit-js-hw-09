@@ -24,26 +24,30 @@ function dataReceivedForm (e) {
 refs.addEventListener('submit', dataReceivedForm);
 
 function createPromise(position, delay) {
+  let step = Number(values.step);
   let amount = values.amount;
-  delay = values.delay;
+  delay = Number(values.delay);
   position = 0;
   let count = 0;
-  let step = values.step;
 
   return new Promise((resolve, reject) => {
-  
+    
     let timeGeneratorPromises = setInterval( () => {
       const shouldResolve = Math.random() > 0.3;
       position ++;
       count++;
+     
       if (shouldResolve) {
-        resolve (Notiflix.Notify.success(`✅ Fulfilled promise ${position} in ${delay}ms`));
+        resolve (position, delay);
+        // resolve (Notiflix.Notify.success(`✅ Fulfilled promise ${position} in ${delay}ms`));
       } else {
-        reject (Notiflix.Notify.failure(`❌ Rejected promise ${position} in ${delay}ms`));
+        reject (position, delay);
+        // reject (Notiflix.Notify.failure(`❌ Rejected promise ${position} in ${delay}ms`));
       }
       if(count == amount){
         clearInterval(timeGeneratorPromises);
       }
+      delay += step;
     }, delay)
   });
  };
@@ -53,11 +57,11 @@ function createPromise(position, delay) {
 
 
 
-// createPromise(2, 1500)
-//   .then(({ position, delay }) => {
-//     position += 1;
-//     console.log(`✅ Fulfilled promise ${position} in ${delay}ms`);
-//   })
-//   .catch(({ position, delay }) => {
-//     console.log(`❌ Rejected promise ${position} in ${delay}ms`);
-//   });
+createPromise(position, delay)
+  .then(({ position, delay }) => {
+    position += 1;
+    console.log(`✅ Fulfilled promise ${position} in ${delay}ms`);
+  })
+  .catch(({ position, delay }) => {
+    console.log(`❌ Rejected promise ${position} in ${delay}ms`);
+  });
